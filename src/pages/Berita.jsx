@@ -1,20 +1,22 @@
 import jadwalRondaPdf from "../assets/jadwal rondo.pdf";
 import pakJunedImage from "../assets/pak juned jaya.JPG";
+import rondaDay1Image from "../assets/ronda day 1.jpeg";
+import motongDagingImage from "../assets/motong daging.png";
 
 const Berita = () => {
   const daftarBerita = [
-    { 
-      id: 4, 
-      kategori: "Ronda", 
-      tanggal: "01 Juni 2026", 
-      judul: "Jadwal Ronda Malam Warga Terbaru", 
-      img: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80", 
+    {
+      id: 4,
+      kategori: "Ronda",
+      tanggal: "01 Juni 2026",
+      judul: "Jadwal Ronda Malam Warga Terbaru",
+      img: rondaDay1Image,
       desc: "Jadwal pembagian tugas ronda malam warga Perumahan Banguntapan Asri untuk meningkatkan keamanan lingkungan. Silakan unduh/lihat file PDF jadwal lengkapnya.",
       pdfLink: jadwalRondaPdf
     },
     { id: 1, kategori: "Pengumuman", tanggal: "15 Mei 2026", judul: "Jadwal Fogging Rutin Bulan Mei", img: "https://images.unsplash.com/photo-1584483756208-4103a89e6eb5?auto=format&fit=crop&q=80", desc: "Pencegahan demam berdarah di lingkungan RW dengan melakukan pengasapan (fogging) terjadwal." },
     { id: 2, kategori: "Kegiatan", tanggal: "10 Mei 2026", judul: "Semarak Perayaan HUT BTA ke-10", img: pakJunedImage, desc: "Berbagai rangkaian perlombaan seni dan budaya untuk merayakan ulang tahun ke-10 Perum Banguntapan Asri." },
-    { id: 3, kategori: "Kerja Bakti", tanggal: "01 Mei 2026", judul: "Kerja Bakti Membersihkan Gorong-Gorong Blok A", img: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80", desc: "Antisipasi musim hujan, warga bahu membahu membersihkan seluruh saluran air di sepanjang Blok A." },
+    { id: 3, kategori: "Kerja Bakti", tanggal: "01 Mei 2026", judul: "Kerja Bakti Warga", img: motongDagingImage, desc: "Kebersamaan warga Perumahan Banguntapan Asri saat bergotong-royong memotong dan membagikan daging secara tertib untuk mempererat silaturahmi antar warga." },
   ];
 
   return (
@@ -30,16 +32,16 @@ const Berita = () => {
         {/* Grid List */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {daftarBerita.map((berita) => (
-            <div 
-              key={berita.id} 
+            <div
+              key={berita.id}
               className="bg-white rounded-2xl shadow-sm border border-primary/5 overflow-hidden hover:shadow-md hover:translate-y-[-4px] transition-all duration-300 flex flex-col h-full"
             >
               {/* Image */}
               <div className="relative overflow-hidden h-52 bg-slate-100">
-                <img 
-                  src={berita.img} 
-                  alt={berita.judul} 
-                  className="w-full h-full object-cover" 
+                <img
+                  src={berita.img}
+                  alt={berita.judul}
+                  className="w-full h-full object-cover"
                 />
               </div>
 
@@ -60,7 +62,7 @@ const Berita = () => {
 
                 {/* Read More / PDF button */}
                 {berita.pdfLink ? (
-                  <a 
+                  <a
                     href={berita.pdfLink}
                     target="_blank"
                     rel="noopener noreferrer"
