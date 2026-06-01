@@ -1,53 +1,74 @@
-// 1. Tambahkan import Link di baris paling atas
 import { Link } from "react-router-dom";
 
 const InfoCards = () => {
   return (
-    <section className="relative z-20 px-6 md:px-12 -mt-16 pb-16">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        {/* Card 1: Pengumuman (Tetap) */}
-        <div className="bg-white p-6 rounded-lg shadow-xl shadow-gray-200/50 border-t-4 border-teal-500">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="font-bold text-gray-800 text-sm tracking-wide">PENGUMUMAN TERBARU</h3>
-            <span className="text-teal-600">🔔</span>
+    <section className="relative z-20 px-6 md:px-12 -mt-20 pb-16">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        {/* Card 1: Pengumuman Terbaru */}
+        <div className="bg-white p-8 rounded-2xl border border-primary/5 shadow-md hover:shadow-lg hover:translate-y-[-4px] transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <span className="text-secondary font-headers font-bold text-sm tracking-wider uppercase">PENGUMUMAN TERBARU</span>
+              <span className="text-primary text-xl"></span>
+            </div>
+            <ul className="space-y-4 font-sans text-[15px] text-primary-dark/85">
+              <li className="border-b border-primary/5 pb-3">
+                <h4 className="font-bold text-primary text-[16px]">Jadwal Fogging Lingkungan</h4>
+                <p className="text-sm text-slate-600 mt-1 font-medium">Dilaksanakan tanggal 25 Mei 2026</p>
+              </li>
+              <li>
+                <h4 className="font-bold text-primary text-[16px]">Pemeliharaan Pipa Air Bersih</h4>
+                <p className="text-sm text-slate-600 mt-1 font-medium">Aliran air mati sementara jam 13:00 - 15:00 WIB</p>
+              </li>
+            </ul>
           </div>
-          <ul className="space-y-4">
-            <li className="font-medium text-gray-700 text-sm border-b pb-2">Jadwal Fogging: 25 Mei</li>
-            <li className="font-medium text-gray-700 text-sm">Matikan Air Jam 1-3</li>
-          </ul>
         </div>
 
-        {/* Card 2: Kegiatan Warga (Tetap) */}
-        <div className="bg-white p-6 rounded-lg shadow-xl shadow-gray-200/50 border-t-4 border-blue-500">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="font-bold text-gray-800 text-sm tracking-wide">KEGIATAN WARGA</h3>
-            <span className="text-blue-600">📅</span>
+        {/* Card 2: Kegiatan Warga */}
+        <div className="bg-white p-8 rounded-2xl border border-primary/5 shadow-md hover:shadow-lg hover:translate-y-[-4px] transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <span className="text-secondary font-headers font-bold text-sm tracking-wider uppercase">KEGIATAN WARGA</span>
+              <span className="text-primary text-xl"></span>
+            </div>
+            <ul className="space-y-4 font-sans text-[15px] text-primary-dark/85">
+              <li className="border-b border-primary/5 pb-3">
+                <h4 className="font-bold text-primary text-[16px]">Kerja Bakti Sosial</h4>
+                <p className="text-sm text-slate-600 mt-1 font-medium">Minggu pagi pukul 07:00 WIB</p>
+              </li>
+              <li className="border-b border-primary/5 pb-3">
+                <h4 className="font-bold text-primary text-[16px]">Persiapan Lomba HUT RI</h4>
+                <p className="text-sm text-slate-600 mt-1 font-medium">Rapat panitia di Balai RW malam ini</p>
+              </li>
+              <li>
+                <h4 className="font-bold text-primary text-[16px]">Peringatan HUT BTA Ke-10</h4>
+                <p className="text-sm text-slate-600 mt-1 font-medium">Puncak acara kesenian warga 10 Juni 2026</p>
+              </li>
+            </ul>
           </div>
-          <ul className="space-y-4">
-            <li className="font-medium text-gray-700 text-sm border-b pb-2">Kerja Bakti Minggu Pagi</li>
-            <li className="font-medium text-gray-700 text-sm border-b pb-2">Lomba 17-an</li>
-            <li className="font-medium text-gray-700 text-sm">HUT BTA 10 Mei</li>
-          </ul>
         </div>
 
-        {/* Card 3: Status Keuangan (UBAH BUTTON MENJADI LINK) */}
-        <div className="bg-white p-6 rounded-lg shadow-xl shadow-gray-200/50 border-t-4 border-green-600">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="font-bold text-gray-800 text-sm tracking-wide">STATUS KEUANGAN</h3>
-            <span className="text-green-600">💵</span>
+        {/* Card 3: Status Keuangan */}
+        <div className="bg-white p-8 rounded-2xl border border-primary/5 shadow-md hover:shadow-lg hover:translate-y-[-4px] transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <span className="text-secondary font-headers font-bold text-sm tracking-wider uppercase">STATUS KEUANGAN</span>
+              <span className="text-primary text-xl"></span>
+            </div>
+            <div className="mb-6 font-sans">
+              <p className="text-xs text-slate-600 uppercase tracking-wider font-bold mb-1">Total Saldo Kas RT</p>
+              <h2 className="text-3xl font-bold text-primary-dark tracking-tight">Rp 15.000.000</h2>
+              <span className="inline-block mt-2 text-xs bg-primary/5 text-primary px-3 py-1 rounded-full font-bold">Update: Hari Ini</span>
+            </div>
           </div>
-          <div className="mb-5">
-            <p className="text-sm text-gray-500 mb-1">Total Saldo Kas RT</p>
-            <h2 className="text-2xl font-bold text-gray-900">Rp 15.000.000</h2>
-          </div>
-          
-          {/* Diubah dari <button> menjadi <Link to="/keuangan"> */}
-          <Link 
-            to="/keuangan" 
-            className="bg-[#1f4b3f] w-full justify-center text-white px-4 py-2 rounded text-sm font-semibold flex items-center gap-2 hover:bg-green-800 transition text-center"
+
+          <Link
+            to="/keuangan"
+            className="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white px-5 py-3.5 rounded-full font-sans font-bold text-xs tracking-wider uppercase transition-all duration-300"
           >
-            Lihat Laporan Lengkap 📄
+            <span>Lihat Laporan Lengkap</span>
+            <span>📄</span>
           </Link>
         </div>
 

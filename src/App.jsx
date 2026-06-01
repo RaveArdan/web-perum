@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLayout from "./components/AdminLayout";
 import AdminKas from "./pages/AdminKas";
+import ScrollToTop from "./components/ScrollToTop";
 
 // --- Wrapper untuk Layout Publik ---
 const PublicLayout = () => {
@@ -31,6 +32,7 @@ const PublicLayout = () => {
 const App = () => {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         
         {/* RUTE PUBLIK */}

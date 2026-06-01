@@ -1,6 +1,5 @@
-// src/pages/Login.jsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -22,38 +21,51 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white p-8 rounded-xl shadow-md max-w-md w-full border border-gray-200">
-        <div className="text-center mb-6">
-          <span className="text-4xl">🔐</span>
-          <h2 className="text-2xl font-bold text-gray-800 mt-2">Login Pengurus Perumahan</h2>
-          <p className="text-gray-500 text-sm mt-1">Masukkan akun admin khusus pengurus RT</p>
+    <div className="min-h-screen flex items-center justify-center bg-primary-dark px-6 relative">
+      {/* Back to Home Link */}
+      <Link 
+        to="/" 
+        className="absolute top-6 left-6 text-sm font-sans font-bold text-slate-300 hover:text-secondary-light uppercase tracking-widest flex items-center gap-1.5 transition-colors"
+      >
+        <span>←</span>
+        <span>Kembali ke Beranda</span>
+      </Link>
+
+      <div className="bg-white p-8 md:p-10 rounded-3xl shadow-lg border border-primary/5 max-w-md w-full relative font-sans">
+        <div className="text-center mb-8">
+          <span className="text-3xl block">🔐</span>
+          <h2 className="text-2xl font-headers font-bold text-primary-dark mt-4 tracking-tight">Login Pengurus</h2>
+          <p className="text-slate-600 text-sm mt-1 font-medium">Masukkan akun khusus administrator RT</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            {/* TAG PENUTUP DIPERBAIKI MENJADI </label> */}
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Username</label>
+            <label className="block text-xs font-bold text-primary-dark/85 uppercase tracking-wider mb-2">Username</label>
             <input 
               type="text" 
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full px-5 py-3 bg-warm border border-slate-200 rounded-full focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 font-semibold text-primary-dark placeholder-slate-400 transition-all text-sm"
+              placeholder="Contoh: adminRT"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
           <div>
-            {/* TAG PENUTUP DIPERBAIKI MENJADI </label> */}
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+            <label className="block text-xs font-bold text-primary-dark/85 uppercase tracking-wider mb-2">Password</label>
             <input 
               type="password" 
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full px-5 py-3 bg-warm border border-slate-200 rounded-full focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 font-semibold text-primary-dark placeholder-slate-500 transition-all text-sm"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-          <button type="submit" className="w-full bg-[#113025] hover:bg-teal-800 text-white py-2.5 rounded-lg font-bold transition mt-2">
+          
+          <button 
+            type="submit" 
+            className="w-full bg-primary hover:bg-primary-light text-white py-3.5 rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300 mt-6"
+          >
             Masuk ke Dashboard
           </button>
         </form>
