@@ -1,6 +1,23 @@
+import { useState, useEffect } from "react";
+import { getSupabase } from "../utils/supabase";
+
 const CekIuran = () => {
-  // Spreadsheet link placeholder - user can easily modify this
-  const spreadsheetUrl = "https://docs.google.com/spreadsheets/d/1_YOUR_SPREADSHEET_ID_HERE/edit?usp=sharing";
+  const [spreadsheetUrl, setSpreadsheetUrl] = useState("https://docs.google.com/spreadsheets/d/1_YOUR_SPREADSHEET_ID_HERE/edit?usp=sharing");
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const supabase = getSupabase();
+        const { data } = await supabase.from("settings").select("*");
+        if (data && data[0] && data[0].iuran_sheet_url) {
+          setSpreadsheetUrl(data[0].iuran_sheet_url);
+        }
+      } catch (err) {
+        console.error("Gagal memuat setting iuran warga:", err);
+      }
+    };
+    loadSettings();
+  }, []);
 
   return (
     <div className="bg-[#faf9f6] min-h-screen py-20 px-6 md:px-12 flex flex-col items-center justify-center relative overflow-hidden">

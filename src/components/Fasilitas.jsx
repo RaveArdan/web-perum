@@ -1,7 +1,7 @@
 const Fasilitas = () => {
   const dataFasilitas = [
     { icon: "📹", nama: "Keamanan & CCTV 24 Jam", desc: "Pemantauan aktif untuk keamanan & ketertiban lingkungan warga" },
-    { icon: "🕌", nama: "Masjid Al-Ikhlas", desc: "Sarana ibadah bersama dan pusat kegiatan keagamaan warga" },
+    { icon: "🕌", nama: "Masjid Al-Hidayah", desc: "Sarana ibadah bersama dan pusat kegiatan keagamaan warga" },
     { icon: "🛝", nama: "Taman Bermain Anak", desc: "Area rekreasi hijau yang asri dan aman untuk bermain anak" },
     { icon: "♻️", nama: "Pengelolaan Sampah", desc: "Sistem pengangkutan sampah terpadu dan terjadwal secara berkala" }
   ];

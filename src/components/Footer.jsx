@@ -6,18 +6,16 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 pb-12 border-b border-primary-light/10 font-sans">
         
         {/* Column 1: Brand block & Socials */}
-        <div className="flex flex-col justify-between">
-          <div>
-            <div className="flex items-center gap-2 mb-5 text-white">
-              <span className="text-xl">🏡</span>
-              <h3 className="text-xl font-headers font-bold tracking-tight">
-                Perumahan Banguntapan <span className="text-secondary-light">Asri</span>
-              </h3>
-            </div>
-            <p className="text-sm text-slate-300/90 leading-relaxed max-w-xs mb-6">
-              Portal resmi paguyuban warga khusus untuk pengelolaan transparansi kas keuangan, iuran bulanan, dan informasi lingkungan Perum Banguntapan Asri, Bantul, DIY.
-            </p>
+        <div>
+          <div className="flex items-center gap-2 mb-5 text-white">
+            <span className="text-xl">🏡</span>
+            <h3 className="text-xl font-headers font-bold tracking-tight">
+              Perumahan Banguntapan <span className="text-secondary-light">Asri</span>
+            </h3>
           </div>
+          <p className="text-sm text-slate-300/90 leading-relaxed max-w-xs mb-6 font-sans">
+            Portal resmi paguyuban warga khusus untuk pengelolaan transparansi kas keuangan, iuran bulanan, dan informasi lingkungan Perum Banguntapan Asri, Bantul, DIY.
+          </p>
           
           <div className="flex items-center gap-3">
             <a 
@@ -48,18 +46,36 @@ const Footer = () => {
         {/* Column 2: Quick Links */}
         <div>
           <h4 className="text-white font-headers font-bold text-sm tracking-wider uppercase mb-5">Navigasi Halaman</h4>
-          <ul className="space-y-3.5 text-sm">
+          <ul className="space-y-3.5 text-sm font-sans">
             <li>
-              <Link to="/" className="hover:text-secondary-light transition-colors duration-200">Beranda</Link>
+              <Link 
+                to="/" 
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="hover:text-secondary-light transition-colors duration-200"
+              >
+                Beranda
+              </Link>
             </li>
             <li>
               <a href="/#tentang" className="hover:text-secondary-light transition-colors duration-200">Tentang Kami</a>
             </li>
             <li>
-              <Link to="/berita" className="hover:text-secondary-light transition-colors duration-200">Berita & Pengumuman</Link>
+              <Link 
+                to="/berita" 
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="hover:text-secondary-light transition-colors duration-200"
+              >
+                Berita & Pengumuman
+              </Link>
             </li>
             <li>
-              <Link to="/keuangan" className="hover:text-secondary-light transition-colors duration-200">Laporan Kas RT</Link>
+              <Link 
+                to="/keuangan" 
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="hover:text-secondary-light transition-colors duration-200"
+              >
+                Laporan Kas RT
+              </Link>
             </li>
           </ul>
         </div>
@@ -67,8 +83,8 @@ const Footer = () => {
         {/* Column 3: Emergency Contacts */}
         <div>
           <h4 className="text-white font-headers font-bold text-sm tracking-wider uppercase mb-5">Kontak Darurat</h4>
-          <ul className="space-y-3.5 text-sm text-slate-300/90">
-            <li className="flex items-center gap-2.5">
+          <ul className="space-y-4 text-xs text-slate-300/90 font-sans">
+            <li className="flex items-center gap-2.5 pb-2 border-b border-primary-light/10">
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
                 fill="none" 
@@ -79,20 +95,79 @@ const Footer = () => {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
               </svg>
-              <span>Ketua RT: <strong className="text-white font-semibold">0898-7654-3210</strong></span>
+              <span>Ketua RT: <strong className="text-white font-bold text-sm">Didik Nurhadi</strong></span>
             </li>
-            <li className="flex items-center gap-2.5">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                strokeWidth={1.8} 
-                stroke="currentColor" 
-                className="w-4 h-4 text-secondary-light shrink-0"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+            
+            <li className="flex items-start gap-2.5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-4 text-rose-500 shrink-0 mt-0.5 animate-pulse">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
               </svg>
-              <span>Layanan PLN: <strong className="text-white font-semibold">123</strong></span>
+              <div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Panggilan Darurat Siaga</p>
+                <p className="text-white font-bold text-sm">112 / 119 (PSC)</p>
+              </div>
+            </li>
+            
+            <li className="flex items-start gap-2.5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-4 text-secondary-light shrink-0 mt-0.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a20.373 20.373 0 0 1-7.147-7.147c-.155-.441.011-.928.387-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+              </svg>
+              <div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">BPBD Kab. Bantul</p>
+                <p className="text-white font-bold">0274 368 222</p>
+                <p className="text-white font-bold">0274 646 2100 (WA)</p>
+              </div>
+            </li>
+
+            <li className="flex items-start gap-2.5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-4 text-secondary-light shrink-0 mt-0.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a20.373 20.373 0 0 1-7.147-7.147c-.155-.441.011-.928.387-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+              </svg>
+              <div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Damkar Bantul</p>
+                <p className="text-white font-bold">0274 646 2100</p>
+              </div>
+            </li>
+
+            <li className="flex items-start gap-2.5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-4 text-secondary-light shrink-0 mt-0.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a20.373 20.373 0 0 1-7.147-7.147c-.155-.441.011-.928.387-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+              </svg>
+              <div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Polres Bantul</p>
+                <p className="text-white font-bold">0274 367 570</p>
+              </div>
+            </li>
+
+            <li className="flex items-start gap-2.5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-4 text-secondary-light shrink-0 mt-0.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a20.373 20.373 0 0 1-7.147-7.147c-.155-.441.011-.928.387-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+              </svg>
+              <div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">RSUD Panembahan Senopati</p>
+                <p className="text-white font-bold">0274 367 381</p>
+              </div>
+            </li>
+
+            <li className="flex items-start gap-2.5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-4 text-secondary-light shrink-0 mt-0.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a20.373 20.373 0 0 1-7.147-7.147c-.155-.441.011-.928.387-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+              </svg>
+              <div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">RSU PKU Muhammadiyah</p>
+                <p className="text-white font-bold">0274 368 238</p>
+              </div>
+            </li>
+
+            <li className="flex items-start gap-2.5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-4 text-secondary-light shrink-0 mt-0.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a20.373 20.373 0 0 1-7.147-7.147c-.155-.441.011-.928.387-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+              </svg>
+              <div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">PMI Kab. Bantul</p>
+                <p className="text-white font-bold">0274 367 987</p>
+                <p className="text-white font-bold">0811 294 8118 (WA)</p>
+              </div>
             </li>
           </ul>
         </div>

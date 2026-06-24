@@ -13,7 +13,8 @@ import CekIuran from "./pages/CekIuran";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLayout from "./components/AdminLayout";
-import AdminKas from "./pages/AdminKas";
+import AdminSettings from "./pages/AdminSettings";
+import AdminBerita from "./pages/AdminBerita";
 import ScrollToTop from "./components/ScrollToTop";
 
 // --- Wrapper untuk Layout Publik ---
@@ -55,7 +56,8 @@ const App = () => {
             </ProtectedRoute>
           }
         >
-          <Route index element={<AdminKas />} />
+          <Route index element={<AdminSettings />} />
+          <Route path="berita" element={<AdminBerita />} />
         </Route>
 
       </Routes>

@@ -32,22 +32,19 @@ const AdminLayout = () => {
             }`}
           >
             <span>📊</span>
-            <span>Kelola Kas & Iuran</span>
+            <span>Kelola Kas & Link</span>
           </Link>
-          <a 
-            href="#" 
-            className="flex items-center gap-3 px-4 py-3 rounded-full font-bold text-xs tracking-widest uppercase text-slate-300 hover:bg-primary-light/20 hover:text-white transition-all duration-300"
+          <Link 
+            to="/admin/berita" 
+            className={`flex items-center gap-3 px-4 py-3 rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300 ${
+              location.pathname === "/admin/berita" 
+                ? "bg-secondary text-white shadow-sm" 
+                : "text-slate-300 hover:bg-primary-light/20 hover:text-white"
+            }`}
           >
             <span>📰</span>
             <span>Kelola Berita</span>
-          </a>
-          <a 
-            href="#" 
-            className="flex items-center gap-3 px-4 py-3 rounded-full font-bold text-xs tracking-widest uppercase text-slate-300 hover:bg-primary-light/20 hover:text-white transition-all duration-300"
-          >
-            <span>👥</span>
-            <span>Data Warga</span>
-          </a>
+          </Link>
         </nav>
 
         {/* Logout Button */}

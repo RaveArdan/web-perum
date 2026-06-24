@@ -1,4 +1,25 @@
+import { useState, useEffect } from "react";
+import { getSupabase } from "../utils/supabase";
+import defaultStrukturPengurusPdf from "../assets/STUKTUR PENGURUS BTA.pdf";
+
 const TentangKami = () => {
+  const [pdfUrl, setPdfUrl] = useState(defaultStrukturPengurusPdf);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const supabase = getSupabase();
+        const { data } = await supabase.from("settings").select("*");
+        if (data && data[0] && data[0].struktur_pengurus_pdf_url) {
+          setPdfUrl(data[0].struktur_pengurus_pdf_url);
+        }
+      } catch (err) {
+        console.error("Gagal memuat setting PDF pengurus:", err);
+      }
+    };
+    loadSettings();
+  }, []);
+
   return (
     <section id="tentang" className="py-24 px-6 md:px-12 bg-white relative overflow-hidden">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16">
@@ -18,12 +39,10 @@ const TentangKami = () => {
         <div className="w-full md:w-1/2 font-sans">
           <span className="text-secondary font-headers font-bold tracking-widest text-sm uppercase block w-fit mb-4">TENTANG KAMI</span>
           <h2 className="text-3xl md:text-4xl font-headers font-bold text-primary-dark mb-6 leading-tight tracking-tight">
-            Lingkungan Asri, <br/>
-            Warga Bersinergi
+            Visi Misi
           </h2>
           <p className="text-primary-dark/90 text-[15px] leading-relaxed mb-8">
-            Paguyuban Warga Perum Banguntapan Asri adalah wadah silaturahmi, gotong royong, dan transparansi koordinasi antar warga. 
-            Kami berdedikasi membangun lingkungan hunian yang aman, inklusif, dan harmonis demi kenyamanan hidup bersama.
+            Membangun komunikasi dan partisipasi aktif warga. Menjaga kebersihan, keamanan, dan ketertiban lingkungan. Mengembangkan kegiatan sosial kemasyarakatan yang humanis. Mendorong transparasi dan akuntabilitas dalam tata kelola RT.
           </p>
 
           {/* Quick value indicators */}
@@ -67,9 +86,14 @@ const TentangKami = () => {
           </div>
           
           <div className="flex gap-4">
-            <button className="border-2 border-secondary text-secondary hover:bg-secondary hover:text-white px-6 py-3 rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300">
+            <a 
+              href={pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-2 border-secondary text-secondary hover:bg-secondary hover:text-white px-6 py-3 rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300 inline-block"
+            >
               Susunan Pengurus
-            </button>
+            </a>
           </div>
         </div>
       </div>
