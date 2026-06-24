@@ -19,7 +19,7 @@ const Footer = () => {
           
           <div className="flex items-center gap-3">
             <a 
-              href="https://facebook.com" 
+              href="https://www.facebook.com/share/17urxSDi5P/" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="w-9 h-9 rounded-full bg-white/5 border border-white/10 hover:border-secondary-light hover:bg-secondary/15 hover:text-secondary-light flex items-center justify-center transition-all duration-300 text-slate-300"
@@ -30,7 +30,7 @@ const Footer = () => {
               </svg>
             </a>
             <a 
-              href="https://instagram.com" 
+              href="https://www.instagram.com/bta.street?igsh=MTI0eDljcnB5eXI4dw==" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="w-9 h-9 rounded-full bg-white/5 border border-white/10 hover:border-secondary-light hover:bg-secondary/15 hover:text-secondary-light flex items-center justify-center transition-all duration-300 text-slate-300"
