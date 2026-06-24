@@ -1,13 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { createPortal } from "react-dom";
+import { getSupabase } from "../utils/supabase";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAspirasiOpen, setIsAspirasiOpen] = useState(false);
+  const [aspirasiUrl, setAspirasiUrl] = useState("");
 
   const handleBerandaClick = () => {
     setIsOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  useEffect(() => {
+    const fetchAspirasiUrl = async () => {
+      try {
+        const supabase = getSupabase();
+        const { data } = await supabase.from("settings").select("aspirasi_form_url");
+        if (data && data[0]) {
+          setAspirasiUrl(data[0].aspirasi_form_url || "");
+        }
+      } catch (err) {
+        console.error("Gagal mengambil link aspirasi:", err);
+      }
+    };
+    fetchAspirasiUrl();
+  }, [isAspirasiOpen]);
 
   return (
     <nav className="bg-white/95 backdrop-blur-sm border-b border-primary/5 px-6 md:px-12 py-5 flex justify-between items-center shadow-sm sticky top-0 z-50 transition-all duration-300">
@@ -34,6 +53,12 @@ const Navbar = () => {
         <a href="/#tentang" className="relative py-1 hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-secondary hover:after:w-full after:transition-all after:duration-300">Tentang Kami</a>
         <a href="/#fasilitas" className="relative py-1 hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-secondary hover:after:w-full after:transition-all after:duration-300">Fasilitas</a>
         <Link to="/berita" className="relative py-1 hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-secondary hover:after:w-full after:transition-all after:duration-300">Berita</Link>
+        <button 
+          onClick={() => setIsAspirasiOpen(true)}
+          className="relative py-1 hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-secondary hover:after:w-full after:transition-all after:duration-300 text-left font-medium cursor-pointer"
+        >
+          Aspirasi Warga
+        </button>
       </div>
 
       <div className="flex items-center gap-4">
@@ -73,6 +98,15 @@ const Navbar = () => {
           <a href="/#tentang" onClick={() => setIsOpen(false)} className="hover:text-primary py-2 border-b border-slate-50 transition-colors">Tentang Kami</a>
           <a href="/#fasilitas" onClick={() => setIsOpen(false)} className="hover:text-primary py-2 border-b border-slate-50 transition-colors">Fasilitas</a>
           <Link to="/berita" onClick={() => setIsOpen(false)} className="hover:text-primary py-2 border-b border-slate-50 transition-colors">Berita</Link>
+          <button 
+            onClick={() => {
+              setIsOpen(false);
+              setIsAspirasiOpen(true);
+            }}
+            className="hover:text-primary py-2 border-b border-slate-50 transition-colors text-left w-full font-medium cursor-pointer"
+          >
+            Aspirasi Warga
+          </button>
           <Link 
             to="/login" 
             onClick={() => setIsOpen(false)}
@@ -81,6 +115,71 @@ const Navbar = () => {
             LOGIN PENGURUS
           </Link>
         </div>
+      )}
+
+      {/* Modal Aspirasi Warga menggunakan React Portal */}
+      {isAspirasiOpen && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fadeIn">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-primary/5 relative space-y-6">
+            
+            {/* Close Button */}
+            <button 
+              onClick={() => setIsAspirasiOpen(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold text-lg p-2 transition-colors cursor-pointer"
+            >
+              ✕
+            </button>
+
+            {/* Icon */}
+            <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto text-3xl">
+              ✉️
+            </div>
+
+            {/* Header */}
+            <div className="text-center">
+              <h3 className="text-xl font-headers font-bold text-primary-dark tracking-tight">
+                Kotak Aspirasi Warga
+              </h3>
+              <p className="text-xs text-secondary font-bold uppercase tracking-wider mt-1">
+                Perum Banguntapan Asri
+              </p>
+            </div>
+
+            {/* Rules / Description */}
+            <div className="p-4 bg-warm border border-primary/5 rounded-2xl text-center space-y-3">
+              <p className="text-sm font-semibold text-slate-700 leading-relaxed">
+                Silakan sampaikan aspirasi, kritik, maupun saran Anda demi kemajuan perumahan kita.
+              </p>
+              <div className="bg-rose-50 border border-rose-100 text-rose-700 text-xs font-semibold p-3.5 rounded-xl leading-relaxed text-left">
+                ⚠️ <strong>Pemberitahuan Penting:</strong>
+                <p className="mt-1 text-rose-600/90 font-medium">
+                  Tidak diperkenankan menulis aspirasi yang mengandung unsur provokatif dan SARA.
+                </p>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col gap-3 pt-2">
+              <a 
+                href={aspirasiUrl || "#"}
+                target="_blank" 
+                rel="noopener noreferrer"
+                onClick={() => setIsAspirasiOpen(false)}
+                className={`w-full text-center py-4 bg-primary hover:bg-primary-light text-white rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300 shadow-md ${!aspirasiUrl ? 'opacity-50 pointer-events-none' : ''}`}
+              >
+                {aspirasiUrl ? "Isi Formulir Aspirasi" : "Tautan Belum Tersedia"}
+              </a>
+              <button 
+                onClick={() => setIsAspirasiOpen(false)}
+                className="w-full text-center py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+              >
+                Kembali
+              </button>
+            </div>
+
+          </div>
+        </div>,
+        document.body
       )}
     </nav>
   );

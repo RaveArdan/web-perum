@@ -16,7 +16,8 @@ const DEFAULT_SETTINGS = {
   id: 1,
   keuangan_sheet_url: "https://docs.google.com/spreadsheets/d/1LZGu7UjWrZCZg-q9aJAulWRmGpGSo_FB/edit?usp=sharing",
   iuran_sheet_url: "https://docs.google.com/spreadsheets/d/1_YOUR_SPREADSHEET_ID_HERE/edit?usp=sharing",
-  struktur_pengurus_pdf_url: "" // Jika kosong, komponen TentangKami akan menggunakan file bawaan src/assets
+  struktur_pengurus_pdf_url: "", // Jika kosong, komponen TentangKami akan menggunakan file bawaan src/assets
+  aspirasi_form_url: "" // Tautan Google Form untuk kotak aspirasi warga
 };
 
 const DEFAULT_BERITA = [

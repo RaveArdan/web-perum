@@ -5,6 +5,7 @@ const AdminSettings = () => {
   const [keuanganUrl, setKeuanganUrl] = useState("");
   const [iuranUrl, setIuranUrl] = useState("");
   const [strukturPdfUrl, setStrukturPdfUrl] = useState("");
+  const [aspirasiUrl, setAspirasiUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
@@ -18,6 +19,7 @@ const AdminSettings = () => {
           setKeuanganUrl(data[0].keuangan_sheet_url || "");
           setIuranUrl(data[0].iuran_sheet_url || "");
           setStrukturPdfUrl(data[0].struktur_pengurus_pdf_url || "");
+          setAspirasiUrl(data[0].aspirasi_form_url || "");
         }
       } catch (err) {
         console.error("Gagal memuat pengaturan admin:", err);
@@ -37,7 +39,8 @@ const AdminSettings = () => {
         .update({
           keuangan_sheet_url: keuanganUrl,
           iuran_sheet_url: iuranUrl,
-          struktur_pengurus_pdf_url: strukturPdfUrl
+          struktur_pengurus_pdf_url: strukturPdfUrl,
+          aspirasi_form_url: aspirasiUrl
         })
         .eq("id", 1);
 
@@ -120,7 +123,7 @@ const AdminSettings = () => {
         {/* Kolom Kiri: Form Link Google Sheets */}
         <div className="lg:col-span-2 bg-white p-8 rounded-3xl border border-primary/5 shadow-sm space-y-6">
           <h3 className="font-headers font-bold text-primary-dark text-base border-b border-primary/5 pb-4 uppercase tracking-wide">
-            Integrasi Spreadsheet
+            Integrasi Spreadsheet & Layanan Warga
           </h3>
 
           <form onSubmit={handleSaveLinks} className="space-y-5">
@@ -134,7 +137,6 @@ const AdminSettings = () => {
                 onChange={(e) => setKeuanganUrl(e.target.value)}
                 className="w-full px-5 py-3 bg-warm border border-slate-200 rounded-full focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 font-semibold text-primary-dark placeholder-slate-400 transition-all text-sm"
                 placeholder="Contoh: https://docs.google.com/spreadsheets/d/..."
-                required
               />
               <span className="text-[11px] text-slate-400 mt-1 block">Tautan sheet kas masuk & keluar yang dibagikan secara publik.</span>
             </div>
@@ -149,9 +151,22 @@ const AdminSettings = () => {
                 onChange={(e) => setIuranUrl(e.target.value)}
                 className="w-full px-5 py-3 bg-warm border border-slate-200 rounded-full focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 font-semibold text-primary-dark placeholder-slate-400 transition-all text-sm"
                 placeholder="Contoh: https://docs.google.com/spreadsheets/d/..."
-                required
               />
               <span className="text-[11px] text-slate-400 mt-1 block">Tautan untuk melihat status rekap pembayaran iuran warga bulanan.</span>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                Link Google Form Kotak Aspirasi Warga
+              </label>
+              <input 
+                type="url" 
+                value={aspirasiUrl}
+                onChange={(e) => setAspirasiUrl(e.target.value)}
+                className="w-full px-5 py-3 bg-warm border border-slate-200 rounded-full focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 font-semibold text-primary-dark placeholder-slate-400 transition-all text-sm"
+                placeholder="Contoh: https://docs.google.com/forms/d/e/..."
+              />
+              <span className="text-[11px] text-slate-400 mt-1 block">Tautan untuk pengisian formulir aspirasi, kritik, atau saran warga.</span>
             </div>
 
             <div className="pt-4">
