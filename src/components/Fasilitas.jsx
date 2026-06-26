@@ -1,9 +1,32 @@
+import cctvImg from "../assets/cctv bta.png";
+import masjidImg from "../assets/masjid alhidayah.png";
+
 const Fasilitas = () => {
   const dataFasilitas = [
-    { icon: "📹", nama: "Keamanan & CCTV 24 Jam", desc: "Pemantauan aktif untuk keamanan & ketertiban lingkungan warga" },
-    { icon: "🕌", nama: "Masjid Al-Hidayah", desc: "Sarana ibadah bersama dan pusat kegiatan keagamaan warga" },
-    { icon: "🛝", nama: "Taman Bermain Anak", desc: "Area rekreasi hijau yang asri dan aman untuk bermain anak" },
-    { icon: "♻️", nama: "Pengelolaan Sampah", desc: "Sistem pengangkutan sampah terpadu dan terjadwal secara berkala" }
+    { 
+      foto: cctvImg, 
+      badge: "📹 Keamanan",
+      nama: "Keamanan & CCTV 24 Jam", 
+      desc: "Pemantauan aktif 24 jam dengan kamera CCTV di berbagai titik strategis untuk menjaga keamanan warga." 
+    },
+    { 
+      foto: masjidImg, 
+      badge: "🕌 Ibadah",
+      nama: "Masjid Al-Hidayah", 
+      desc: "Sarana ibadah bersama yang nyaman, bersih, serta menjadi pusat kegiatan keagamaan warga." 
+    },
+    { 
+      foto: "https://images.unsplash.com/photo-1596464716127-f2a82984de30?auto=format&fit=crop&q=80", 
+      badge: "🛝 Rekreasi",
+      nama: "Taman Bermain Anak", 
+      desc: "Area bermain yang hijau, aman, ramah anak, serta dilengkapi tempat bersantai bagi orang tua." 
+    },
+    { 
+      foto: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80", 
+      badge: "♻️ Kebersihan",
+      nama: "Pengelolaan Sampah", 
+      desc: "Sistem pengangkutan sampah terpadu yang higienis, teratur, dan terjadwal secara berkala." 
+    }
   ];
 
   return (
@@ -16,13 +39,26 @@ const Fasilitas = () => {
           {dataFasilitas.map((fasi, index) => (
             <div 
               key={index} 
-              className="bg-white p-8 rounded-2xl shadow-sm border border-primary/5 hover:border-secondary/20 hover:translate-y-[-4px] transition-all duration-300 flex flex-col items-center text-center"
+              className="bg-white rounded-3xl overflow-hidden shadow-sm border border-primary/5 hover:border-secondary/20 hover:-translate-y-2 hover:shadow-lg transition-all duration-300 flex flex-col group"
             >
-              <div className="w-16 h-16 rounded-full bg-warm text-3xl mb-6 flex items-center justify-center border border-primary/5">
-                {fasi.icon}
+              {/* Image Frame with Zoom Hover Effect and explicit rounding to fix webkit clipping bug */}
+              <div className="h-52 w-full overflow-hidden relative rounded-t-3xl" style={{ transform: "translate3d(0, 0, 0)" }}>
+                <img 
+                  src={fasi.foto} 
+                  alt={fasi.nama} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-t-3xl"
+                />
+                {/* Floating category badge */}
+                <span className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm border border-primary/5 text-primary-dark text-[11px] font-bold px-3 py-1 rounded-full shadow-sm tracking-wide">
+                  {fasi.badge}
+                </span>
               </div>
-              <h3 className="font-headers font-bold text-primary-dark text-lg mb-2">{fasi.nama}</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">{fasi.desc}</p>
+
+              {/* Card Body */}
+              <div className="p-6 flex flex-col flex-grow text-left">
+                <h3 className="font-headers font-bold text-primary-dark text-lg mb-2 leading-snug">{fasi.nama}</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">{fasi.desc}</p>
+              </div>
             </div>
           ))}
         </div>

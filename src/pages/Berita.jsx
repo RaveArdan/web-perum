@@ -53,13 +53,15 @@ const Berita = () => {
                 className="bg-white rounded-2xl shadow-sm border border-primary/5 overflow-hidden hover:shadow-md hover:translate-y-[-4px] transition-all duration-300 flex flex-col h-full"
               >
                 {/* Image */}
-                <div className="relative overflow-hidden h-52 bg-slate-100">
-                  <img
-                    src={berita.img || "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80"}
-                    alt={berita.judul}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                {berita.img && (
+                  <div className="relative overflow-hidden h-52 bg-slate-100">
+                    <img
+                      src={berita.img}
+                      alt={berita.judul}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
 
                 {/* Card Body */}
                 <div className="p-6 flex flex-col justify-between flex-1">

@@ -1,22 +1,43 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { CustomAlert } from "../components/CustomDialog";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [alertConfig, setAlertConfig] = useState({ show: false, message: "", type: "success" });
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
     
-    // LOGIN SIMULASI (Nanti bagian ini disambungkan ke Database)
+    // LOGIN SIMULASI
     if (username === "adminRT" && password === "rahasiabt123") {
       // Simpan status login di localStorage browser
       localStorage.setItem("isAdminAuthenticated", "true");
-      // Pindahkan admin ke halaman dashboard admin
-      navigate("/admin");
+      setAlertConfig({
+        show: true,
+        message: "Login berhasil! Selamat datang kembali, Admin.",
+        type: "success"
+      });
+      
+      // Arahkan ke halaman admin setelah 1.5 detik
+      setTimeout(() => {
+        navigate("/admin");
+      }, 1500);
     } else {
-      alert("Username atau Password Salah!");
+      setAlertConfig({
+        show: true,
+        message: "Username atau Password Salah! Harap periksa kembali kredensial Anda.",
+        type: "error"
+      });
+    }
+  };
+
+  const handleCloseAlert = () => {
+    setAlertConfig({ ...alertConfig, show: false });
+    if (alertConfig.type === "success") {
+      navigate("/admin");
     }
   };
 
@@ -70,6 +91,13 @@ const Login = () => {
           </button>
         </form>
       </div>
+
+      <CustomAlert 
+        show={alertConfig.show} 
+        message={alertConfig.message} 
+        type={alertConfig.type} 
+        onClose={handleCloseAlert} 
+      />
     </div>
   );
 };

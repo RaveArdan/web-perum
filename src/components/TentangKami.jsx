@@ -10,8 +10,15 @@ const TentangKami = () => {
       try {
         const supabase = getSupabase();
         const { data } = await supabase.from("settings").select("*");
-        if (data && data[0] && data[0].struktur_pengurus_pdf_url) {
-          setPdfUrl(data[0].struktur_pengurus_pdf_url);
+        if (data && data[0]) {
+          const dbUrl = data[0].struktur_pengurus_pdf_url;
+          if (dbUrl === "none") {
+            setPdfUrl(""); // Sembunyikan tombol jika admin menghapusnya
+          } else if (dbUrl) {
+            setPdfUrl(dbUrl); // Gunakan file PDF yang diunggah
+          } else {
+            setPdfUrl(defaultStrukturPengurusPdf); // Fallback ke file lokal bawaan
+          }
         }
       } catch (err) {
         console.error("Gagal memuat setting PDF pengurus:", err);
@@ -85,16 +92,18 @@ const TentangKami = () => {
             </div>
           </div>
           
-          <div className="flex gap-4">
-            <a 
-              href={pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border-2 border-secondary text-secondary hover:bg-secondary hover:text-white px-6 py-3 rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300 inline-block"
-            >
-              Susunan Pengurus
-            </a>
-          </div>
+          {pdfUrl && (
+            <div className="flex gap-4">
+              <a 
+                href={pdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border-2 border-secondary text-secondary hover:bg-secondary hover:text-white px-6 py-3 rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300 inline-block"
+              >
+                Susunan Pengurus
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </section>

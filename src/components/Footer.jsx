@@ -57,7 +57,7 @@ const Footer = () => {
               </Link>
             </li>
             <li>
-              <a href="/#tentang" className="hover:text-secondary-light transition-colors duration-200">Tentang Kami</a>
+              <Link to="/#tentang" className="hover:text-secondary-light transition-colors duration-200">Tentang Kami</Link>
             </li>
             <li>
               <Link 

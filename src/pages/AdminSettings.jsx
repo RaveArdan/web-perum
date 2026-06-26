@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getSupabase, isLocalFallback } from "../utils/supabase";
+import { CustomAlert, CustomConfirm } from "../components/CustomDialog";
 
 const AdminSettings = () => {
   const [keuanganUrl, setKeuanganUrl] = useState("");
@@ -8,6 +9,14 @@ const AdminSettings = () => {
   const [aspirasiUrl, setAspirasiUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+
+  // Custom alert & confirm states
+  const [alertConfig, setAlertConfig] = useState({ show: false, message: "", type: "success" });
+  const [confirmConfig, setConfirmConfig] = useState({ show: false, message: "", onConfirm: null });
+
+  const showAlert = (message, type = "success") => {
+    setAlertConfig({ show: true, message, type });
+  };
 
   // Muat data pengaturan aktif
   useEffect(() => {
@@ -45,10 +54,10 @@ const AdminSettings = () => {
         .eq("id", 1);
 
       if (error) throw error;
-      alert("Pengaturan tautan berhasil disimpan!");
+      showAlert("Pengaturan tautan berhasil disimpan!", "success");
     } catch (err) {
       console.error("Gagal menyimpan tautan:", err);
-      alert("Gagal menyimpan data ke database.");
+      showAlert("Gagal menyimpan data ke database.", "error");
     } finally {
       setSaving(false);
     }
@@ -60,7 +69,7 @@ const AdminSettings = () => {
     if (!file) return;
 
     if (file.type !== "application/pdf") {
-      alert("Harap unggah file berformat PDF!");
+      showAlert("Harap unggah file berformat PDF!", "error");
       return;
     }
 
@@ -73,10 +82,22 @@ const AdminSettings = () => {
       if (isLocalFallback) {
         // Fallback: konversi file ke base64 DataURL dan simpan di localStorage
         const reader = new FileReader();
-        reader.onloadend = () => {
-          setStrukturPdfUrl(reader.result);
-          setUploading(false);
-          alert("File PDF berhasil diunggah secara lokal!");
+        reader.onloadend = async () => {
+          const newUrl = reader.result;
+          setStrukturPdfUrl(newUrl);
+          try {
+            const { error: dbError } = await supabase
+              .from("settings")
+              .update({ struktur_pengurus_pdf_url: newUrl })
+              .eq("id", 1);
+            if (dbError) throw dbError;
+            showAlert("File PDF berhasil diunggah secara lokal!", "success");
+          } catch (dbErr) {
+            console.error("Gagal menyimpan PDF ke DB lokal:", dbErr);
+            showAlert("Gagal menyimpan PDF ke database lokal.", "error");
+          } finally {
+            setUploading(false);
+          }
         };
         reader.readAsDataURL(file);
       } else {
@@ -89,16 +110,56 @@ const AdminSettings = () => {
 
         // Ambil URL publik dari file yang diunggah
         const { data } = supabase.storage.from("settings").getPublicUrl(fileName);
-        setStrukturPdfUrl(data.publicUrl);
+        const newUrl = data.publicUrl;
+        setStrukturPdfUrl(newUrl);
+
+        // Simpan langsung ke database
+        const { error: dbError } = await supabase
+          .from("settings")
+          .update({ struktur_pengurus_pdf_url: newUrl })
+          .eq("id", 1);
+        if (dbError) throw dbError;
+
         setUploading(false);
-        alert("File PDF berhasil diunggah ke storage cloud!");
+        showAlert("File PDF berhasil diunggah ke storage cloud!", "success");
       }
     } catch (err) {
       console.error("Gagal mengunggah PDF:", err);
-      alert("Gagal mengunggah file PDF.");
+      showAlert("Gagal mengunggah file PDF.", "error");
       setUploading(false);
     }
   };
+
+  // Hapus file PDF struktur pengurus
+  const handleDeletePdf = () => {
+    setConfirmConfig({
+      show: true,
+      message: "Apakah Anda yakin ingin menghapus file PDF struktur organisasi ini? Tautan tombol di beranda akan secara otomatis dikembalikan untuk membuka file dokumen bawaan perumahan.",
+      onConfirm: executeDeletePdf
+    });
+  };
+
+  const executeDeletePdf = async () => {
+    setUploading(true);
+    try {
+      const supabase = getSupabase();
+      const { error } = await supabase
+        .from("settings")
+        .update({ struktur_pengurus_pdf_url: "" }) // Kosongkan agar beranda menggunakan file default
+        .eq("id", 1);
+
+      if (error) throw error;
+      setStrukturPdfUrl("");
+      showAlert("File PDF berhasil dihapus!", "success");
+    } catch (err) {
+      console.error("Gagal menghapus PDF:", err);
+      showAlert("Gagal menghapus file PDF dari database.", "error");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const hasPdf = strukturPdfUrl && strukturPdfUrl !== "none";
 
   return (
     <div className="space-y-10 font-sans">
@@ -182,53 +243,91 @@ const AdminSettings = () => {
         </div>
 
         {/* Kolom Kanan: Pengelolaan PDF */}
-        <div className="bg-white p-8 rounded-3xl border border-primary/5 shadow-sm flex flex-col justify-between">
-          <div>
-            <h3 className="font-headers font-bold text-primary-dark text-base border-b border-primary/5 pb-4 uppercase tracking-wide mb-6">
+        <div className="bg-white p-8 rounded-3xl border border-primary/5 shadow-sm flex flex-col justify-between h-full">
+          <div className="space-y-6">
+            <h3 className="font-headers font-bold text-primary-dark text-base border-b border-primary/5 pb-4 uppercase tracking-wide">
               Struktur Organisasi (PDF)
             </h3>
 
-            <div className="space-y-4">
-              <div className="p-4 bg-warm border border-primary/5 rounded-2xl text-center flex flex-col items-center justify-center min-h-[140px]">
-                <span className="text-3xl mb-3">📄</span>
-                {strukturPdfUrl ? (
-                  <div>
-                    <p className="text-xs font-bold text-primary">PDF Struktur Terunggah</p>
+            <div className="space-y-5">
+              {hasPdf ? (
+                <div className="space-y-4">
+                  {/* Premium PDF Info Card */}
+                  <div className="flex items-center gap-3.5 p-4 bg-emerald-50/40 border border-emerald-100/70 rounded-2xl">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl shrink-0">
+                      📄
+                    </div>
+                    <div className="text-left flex-1 min-w-0 font-sans">
+                      <p className="text-xs font-bold text-slate-700 truncate">struktur_pengurus.pdf</p>
+                      <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider mt-0.5">Dokumen Terpasang Aktif</p>
+                    </div>
+                  </div>
+
+                  {/* Actions Grid */}
+                  <div className="grid grid-cols-2 gap-3">
                     <a 
                       href={strukturPdfUrl}
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="text-xs text-secondary hover:text-secondary-dark font-bold underline block mt-1"
+                      className="inline-flex items-center justify-center bg-secondary hover:bg-secondary-dark text-white py-3 rounded-full font-bold text-[10px] uppercase tracking-wider transition-all duration-200 text-center shadow-sm"
                     >
-                      Lihat File PDF Aktif
+                      Lihat File
                     </a>
+                    <button
+                      type="button"
+                      onClick={handleDeletePdf}
+                      disabled={uploading}
+                      className="inline-flex items-center justify-center bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-full font-bold text-[10px] uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-sm"
+                    >
+                      Hapus File
+                    </button>
                   </div>
-                ) : (
-                  <p className="text-xs text-slate-500 font-medium">Belum ada file PDF baru yang diunggah.</p>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="p-6 bg-slate-50/50 border-2 border-dashed border-slate-200/80 rounded-2xl text-center flex flex-col items-center justify-center min-h-[140px] text-slate-400 font-sans">
+                  <span className="text-3xl mb-3">📤</span>
+                  <p className="text-xs font-bold text-slate-600">Belum ada file PDF terunggah</p>
+                  <p className="text-[10px] text-slate-400 mt-1.5 max-w-[180px] leading-relaxed">Website beranda akan menggunakan dokumen bawaan (lokal).</p>
+                </div>
+              )}
 
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                  Unggah File PDF Baru
+              {/* Custom Premium File Upload Button */}
+              <div className="pt-2">
+                <label className={`w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white py-3.5 px-6 rounded-full font-bold text-xs tracking-wider uppercase shadow-sm transition-all duration-300 cursor-pointer text-center select-none ${uploading ? "opacity-50 pointer-events-none" : ""}`}>
+                  <span>{uploading ? "Sedang Mengunggah..." : (hasPdf ? "Ganti File PDF" : "Unggah File PDF Baru")}</span>
+                  <input 
+                    type="file" 
+                    accept="application/pdf"
+                    onChange={handlePdfUpload}
+                    disabled={uploading}
+                    className="hidden"
+                  />
                 </label>
-                <input 
-                  type="file" 
-                  accept="application/pdf"
-                  onChange={handlePdfUpload}
-                  disabled={uploading}
-                  className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary/5 file:text-primary hover:file:bg-primary/10 file:cursor-pointer"
-                />
               </div>
             </div>
           </div>
 
-          <div className="pt-6 border-t border-primary/5 mt-6 text-slate-400 text-[11px] leading-relaxed">
-            Mengunggah file PDF baru akan otomatis memperbarui tautan tombol <strong>"Susunan Pengurus"</strong> di beranda.
+          <div className="pt-6 border-t border-primary/5 mt-8 text-slate-400 text-[11px] leading-relaxed font-sans">
+            Mengunggah file PDF baru akan memperbarui tombol <strong>"Susunan Pengurus"</strong> di beranda secara instan.
           </div>
         </div>
 
       </div>
+
+      {/* Reusable premium alert and confirm modal popups */}
+      <CustomAlert 
+        show={alertConfig.show} 
+        message={alertConfig.message} 
+        type={alertConfig.type} 
+        onClose={() => setAlertConfig({ ...alertConfig, show: false })} 
+      />
+      
+      <CustomConfirm 
+        show={confirmConfig.show} 
+        message={confirmConfig.message} 
+        onConfirm={confirmConfig.onConfirm} 
+        onCancel={() => setConfirmConfig({ ...confirmConfig, show: false })} 
+      />
     </div>
   );
 };

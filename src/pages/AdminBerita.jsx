@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getSupabase, isLocalFallback } from "../utils/supabase";
+import { CustomAlert, CustomConfirm } from "../components/CustomDialog";
 
 const AdminBerita = () => {
   const [daftarBerita, setDaftarBerita] = useState([]);
@@ -16,6 +17,14 @@ const AdminBerita = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [showForm, setShowForm] = useState(false);
+
+  // Custom alert & confirm states
+  const [alertConfig, setAlertConfig] = useState({ show: false, message: "", type: "success" });
+  const [confirmConfig, setConfirmConfig] = useState({ show: false, message: "", onConfirm: null });
+
+  const showAlert = (message, type = "success") => {
+    setAlertConfig({ show: true, message, type });
+  };
 
   // Muat daftar berita
   const loadBerita = async () => {
@@ -45,7 +54,7 @@ const AdminBerita = () => {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      alert("Harap pilih file gambar!");
+      showAlert("Harap pilih file gambar!", "error");
       return;
     }
 
@@ -91,7 +100,7 @@ const AdminBerita = () => {
         tanggal,
         judul,
         desc,
-        img: imageUrl,
+        img: imageUrl || "",
         pdfLink: pdfLink || null
       };
 
@@ -102,39 +111,45 @@ const AdminBerita = () => {
           .update(newsData)
           .eq("id", editingId);
         if (error) throw error;
-        alert("Berita berhasil diperbarui!");
+        showAlert("Berita berhasil diperbarui!", "success");
       } else {
         // Insert berita baru
         const { error } = await supabase
           .from("berita")
           .insert([newsData]);
         if (error) throw error;
-        alert("Berita baru berhasil ditambahkan!");
+        showAlert("Berita baru berhasil ditambahkan!", "success");
       }
 
       resetForm();
       loadBerita();
     } catch (err) {
       console.error("Gagal menyimpan berita:", err);
-      alert("Gagal menyimpan berita.");
+      showAlert("Gagal menyimpan berita.", "error");
     } finally {
       setSaving(false);
     }
   };
 
   // Hapus berita
-  const handleDelete = async (id) => {
-    if (!window.confirm("Apakah Anda yakin ingin menghapus berita ini?")) return;
+  const handleDelete = (id) => {
+    setConfirmConfig({
+      show: true,
+      message: "Apakah Anda yakin ingin menghapus berita/pengumuman ini secara permanen?",
+      onConfirm: () => executeDelete(id)
+    });
+  };
 
+  const executeDelete = async (id) => {
     try {
       const supabase = getSupabase();
       const { error } = await supabase.from("berita").delete().eq("id", id);
       if (error) throw error;
-      alert("Berita berhasil dihapus!");
+      showAlert("Berita berhasil dihapus!", "success");
       loadBerita();
     } catch (err) {
       console.error("Gagal menghapus berita:", err);
-      alert("Gagal menghapus berita.");
+      showAlert("Gagal menghapus berita.", "error");
     }
   };
 
@@ -282,12 +297,23 @@ const AdminBerita = () => {
                 </div>
                 
                 {imagePreview && (
-                  <div className="relative w-full h-24 bg-warm border border-primary/5 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center">
+                  <div className="relative w-full h-24 bg-warm border border-primary/5 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center group">
                     <img 
                       src={imagePreview} 
                       alt="Preview" 
                       className="w-full h-full object-cover"
                     />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setImageFile(null);
+                        setImagePreview("");
+                      }}
+                      className="absolute top-1.5 right-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-md cursor-pointer transition-colors"
+                      title="Hapus Gambar"
+                    >
+                      ✕
+                    </button>
                   </div>
                 )}
               </div>
@@ -380,6 +406,21 @@ const AdminBerita = () => {
           </div>
         )}
       </div>
+
+      {/* Reusable premium alert and confirm modal popups */}
+      <CustomAlert 
+        show={alertConfig.show} 
+        message={alertConfig.message} 
+        type={alertConfig.type} 
+        onClose={() => setAlertConfig({ ...alertConfig, show: false })} 
+      />
+      
+      <CustomConfirm 
+        show={confirmConfig.show} 
+        message={confirmConfig.message} 
+        onConfirm={confirmConfig.onConfirm} 
+        onCancel={() => setConfirmConfig({ ...confirmConfig, show: false })} 
+      />
     </div>
   );
 };
