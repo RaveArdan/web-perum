@@ -173,6 +173,13 @@ export const getSupabase = () => {
   // Kembalikan Mock Client jika Supabase belum dikonfigurasi
   return {
     from: (table) => new MockBuilder(table),
+    auth: {
+      getSession: async () => ({ data: { session: null }, error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+      signInWithPassword: async () => ({ data: { user: null }, error: new Error("Mock auth mode") }),
+      signInWithOAuth: async () => ({ data: {}, error: new Error("Mock auth mode") }),
+      signOut: async () => ({ error: null })
+    },
     storage: {
       from: (bucket) => ({
         upload: async (path, file) => {
