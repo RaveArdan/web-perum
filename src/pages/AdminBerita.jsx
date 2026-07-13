@@ -189,9 +189,12 @@ const AdminBerita = () => {
         {!showForm && (
           <button 
             onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-2 bg-primary hover:bg-primary-light text-white px-6 py-3.5 rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300 shadow-sm"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-light hover:brightness-110 hover:-translate-y-0.5 active:translate-y-0 text-white px-6 py-3.5 rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300 shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20"
           >
-            + Tambah Berita Baru
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Tambah Berita Baru</span>
           </button>
         )}
       </div>
@@ -322,16 +325,34 @@ const AdminBerita = () => {
                 <button 
                   type="button"
                   onClick={resetForm}
-                  className="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold text-xs uppercase tracking-wider transition-colors"
+                  className="inline-flex items-center gap-1.5 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold text-xs uppercase tracking-wider transition-colors"
                 >
-                  Batal
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span>Batal</span>
                 </button>
                 <button 
                   type="submit"
                   disabled={saving}
-                  className="bg-primary hover:bg-primary-light text-white px-8 py-3.5 rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300 shadow-sm disabled:opacity-50"
+                  className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary-light hover:brightness-110 hover:-translate-y-0.5 active:translate-y-0 text-white px-8 py-3.5 rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300 shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 disabled:opacity-50 disabled:pointer-events-none"
                 >
-                  {saving ? "Menyimpan..." : (editingId ? "Simpan Perubahan" : "Terbitkan Berita")}
+                  {saving ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      <span>Menyimpan...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                      </svg>
+                      <span>{editingId ? "Simpan Perubahan" : "Terbitkan Berita"}</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -369,14 +390,22 @@ const AdminBerita = () => {
               <tbody className="divide-y divide-primary/5 text-sm text-slate-700 font-medium">
                 {daftarBerita.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50/40 transition-colors">
-                    <td className="p-5 whitespace-nowrap">
-                      <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-100 border border-primary/5">
-                        <img 
-                          src={item.img || "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80"} 
-                          alt="Post Thumbnail" 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                     <td className="p-5 whitespace-nowrap">
+                      {item.img ? (
+                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-100 border border-primary/5">
+                          <img 
+                            src={item.img} 
+                            alt="Post Thumbnail" 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-slate-50 border border-dashed border-slate-200 flex items-center justify-center text-slate-400" title="Tidak ada gambar">
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
                     </td>
                     <td className="p-5 whitespace-nowrap text-slate-500">{item.tanggal}</td>
                     <td className="p-5 font-bold text-primary-dark max-w-xs truncate">{item.judul}</td>
@@ -388,14 +417,20 @@ const AdminBerita = () => {
                     <td className="p-5 whitespace-nowrap text-center">
                       <button 
                         onClick={() => startEdit(item)}
-                        className="text-secondary hover:text-secondary-dark font-bold text-xs uppercase tracking-wider mr-4 transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-secondary/10 hover:bg-secondary/20 text-secondary-dark rounded-full font-bold text-[10px] uppercase tracking-wider mr-2.5 transition-all"
                       >
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
                         Ubah
                       </button>
                       <button 
                         onClick={() => handleDelete(item.id)}
-                        className="text-rose-500 hover:text-rose-700 font-bold text-xs uppercase tracking-wider transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-full font-bold text-[10px] uppercase tracking-wider transition-all"
                       >
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
                         Hapus
                       </button>
                     </td>

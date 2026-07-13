@@ -28,6 +28,34 @@ const Navbar = () => {
     fetchAspirasiUrl();
   }, [isAspirasiOpen]);
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const isAuthLocal = localStorage.getItem("isAdminAuthenticated") === "true";
+      if (isAuthLocal) {
+        setIsLoggedIn(true);
+        return;
+      }
+
+      try {
+        const supabase = getSupabase();
+        const { data: { session } } = await supabase.auth.getSession();
+        setIsLoggedIn(!!session);
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+          setIsLoggedIn(!!session);
+        });
+
+        return () => subscription?.unsubscribe();
+      } catch (err) {
+        console.error("Gagal memeriksa sesi auth di navbar:", err);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
   return (
     <nav className="bg-white/95 backdrop-blur-sm border-b border-primary/5 px-6 md:px-12 py-5 flex justify-between items-center shadow-sm sticky top-0 z-50 transition-all duration-300">
       <Link 
@@ -62,12 +90,12 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center gap-4">
-        {/* Tombol Login */}
+        {/* Tombol Login atau Dashboard */}
         <Link 
-          to="/login" 
+          to={isLoggedIn ? "/admin" : "/login"} 
           className="hidden md:inline-flex items-center justify-center bg-primary hover:bg-primary-light text-white px-6 py-3 rounded-full font-sans font-bold text-xs tracking-wider uppercase shadow-sm transition-all duration-200"
         >
-          LOGIN PENGURUS
+          {isLoggedIn ? "DASHBOARD ADMIN" : "LOGIN PENGURUS"}
         </Link>
 
         {/* Mobile Hamburger Button */}
@@ -108,70 +136,89 @@ const Navbar = () => {
             Aspirasi Warga
           </button>
           <Link 
-            to="/login" 
+            to={isLoggedIn ? "/admin" : "/login"} 
             onClick={() => setIsOpen(false)}
             className="w-full text-center bg-primary hover:bg-primary-light text-white py-3.5 rounded-full font-bold text-xs tracking-wider uppercase transition-all"
           >
-            LOGIN PENGURUS
+            {isLoggedIn ? "DASHBOARD ADMIN" : "LOGIN PENGURUS"}
           </Link>
         </div>
       )}
 
       {/* Modal Aspirasi Warga menggunakan React Portal */}
       {isAspirasiOpen && createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fadeIn">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-primary/5 relative space-y-6">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-[#faf9f6] rounded-3xl p-8 max-w-md w-full shadow-2xl border border-primary/10 relative space-y-6 overflow-hidden animate-scaleUp">
             
+            {/* Corner Decorative Waves (Clean Green Accent Curves, Grandeur Reduced) */}
+            <div className="absolute top-0 left-0 w-24 h-24 bg-gradient-to-br from-primary to-primary-light rounded-br-[100px] opacity-100 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-primary to-primary-light rounded-tr-[80px] opacity-100 pointer-events-none"></div>
+
             {/* Close Button */}
             <button 
               onClick={() => setIsAspirasiOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold text-lg p-2 transition-colors cursor-pointer"
+              className="absolute top-4 right-4 w-9 h-9 bg-white text-secondary hover:text-primary rounded-full flex items-center justify-center shadow-md border border-slate-100 transition-all hover:scale-105 cursor-pointer z-10"
             >
               ✕
             </button>
 
-            {/* Icon */}
-            <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto text-3xl">
-              ✉️
+            {/* Emblem Circle (Gold Ring with Green Inner) */}
+            <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full border-2 border-secondary/60"></div>
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-lg">
+                <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                </svg>
+              </div>
             </div>
 
             {/* Header */}
-            <div className="text-center">
-              <h3 className="text-xl font-headers font-bold text-primary-dark tracking-tight">
+            <div className="text-center space-y-1 relative z-10">
+              <h3 className="text-2xl font-headers font-bold text-primary tracking-tight">
                 Kotak Aspirasi Warga
               </h3>
-              <p className="text-xs text-secondary font-bold uppercase tracking-wider mt-1">
+              <p className="text-xs font-bold text-secondary tracking-widest uppercase">
                 Perum Banguntapan Asri
               </p>
+              <div className="flex items-center justify-center gap-1.5 pt-1">
+                <span className="w-6 h-[1px] bg-secondary/35"></span>
+                <span className="text-[10px] text-secondary">✦</span>
+                <span className="w-6 h-[1px] bg-secondary/35"></span>
+              </div>
             </div>
 
-            {/* Rules / Description */}
-            <div className="p-4 bg-warm border border-primary/5 rounded-2xl text-center space-y-3">
-              <p className="text-sm font-semibold text-slate-700 leading-relaxed">
+            {/* Inner Content Card */}
+            <div className="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm space-y-4 relative z-10">
+              <p className="text-[14px] font-semibold text-slate-700 leading-relaxed text-center">
                 Silakan sampaikan aspirasi, kritik, maupun saran Anda demi kemajuan perumahan kita.
               </p>
-              <div className="bg-rose-50 border border-rose-100 text-rose-700 text-xs font-semibold p-3.5 rounded-xl leading-relaxed text-left">
-                ⚠️ <strong>Pemberitahuan Penting:</strong>
-                <p className="mt-1 text-rose-600/90 font-medium">
+              
+              {/* Alert box */}
+              <div className="bg-[#fdfbf7] border border-secondary/30 text-slate-800 p-4 rounded-xl space-y-1">
+                <div className="flex items-center gap-2 text-secondary font-bold text-xs uppercase tracking-wide">
+                  <span>⚠️</span>
+                  <span>Pemberitahuan Penting:</span>
+                </div>
+                <p className="text-[12px] text-slate-600 font-medium leading-relaxed">
                   Tidak diperkenankan menulis aspirasi yang mengandung unsur provokatif dan SARA.
                 </p>
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-3 pt-2">
+            <div className="flex flex-col gap-3 pt-2 relative z-10">
               <a 
                 href={aspirasiUrl || "#"}
                 target="_blank" 
                 rel="noopener noreferrer"
                 onClick={() => setIsAspirasiOpen(false)}
-                className={`w-full text-center py-4 bg-primary hover:bg-primary-light text-white rounded-full font-bold text-xs tracking-widest uppercase transition-all duration-300 shadow-md ${!aspirasiUrl ? 'opacity-50 pointer-events-none' : ''}`}
+                className={`w-full text-center py-4 bg-gradient-to-r from-primary to-primary-light hover:brightness-105 text-white rounded-full font-bold text-xs tracking-wider uppercase transition-all duration-300 shadow-md ${!aspirasiUrl ? 'opacity-50 pointer-events-none' : ''}`}
               >
-                {aspirasiUrl ? "Isi Formulir Aspirasi" : "Tautan Belum Tersedia"}
+                Isi Formulir Aspirasi
               </a>
               <button 
                 onClick={() => setIsAspirasiOpen(false)}
-                className="w-full text-center py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                className="w-full text-center py-3.5 bg-white hover:bg-slate-50 border border-secondary/40 hover:border-secondary text-secondary font-bold text-xs uppercase tracking-wider rounded-full transition-all cursor-pointer"
               >
                 Kembali
               </button>

@@ -12,7 +12,9 @@ const Berita = () => {
         const supabase = getSupabase();
         const { data, error } = await supabase.from("berita").select("*").order("id", { ascending: false });
         if (error) throw error;
-        setDaftarBerita(data || []);
+        // Filter agar kategori 'Pengumuman' tidak masuk ke halaman berita
+        const filteredData = (data || []).filter(item => item.kategori !== "Pengumuman");
+        setDaftarBerita(filteredData);
       } catch (err) {
         console.error("Gagal memuat berita:", err);
       } finally {
@@ -43,7 +45,7 @@ const Berita = () => {
           </div>
         ) : daftarBerita.length === 0 ? (
           <div className="text-center py-20 text-slate-500 font-medium">
-            Belum ada berita atau pengumuman saat ini.
+            Belum ada berita saat ini.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -72,13 +74,13 @@ const Berita = () => {
                       </span>
                       <span className="text-sm text-slate-600 font-semibold">{berita.tanggal}</span>
                     </div>
-                    <h2 className="font-headers font-bold text-primary-dark text-lg md:text-xl mb-3 leading-snug hover:text-primary transition-colors">
+                    <h2 className="font-headers font-bold text-primary-dark text-lg md:text-xl mb-3 leading-snug">
                       {berita.judul}
                     </h2>
                     <p className="text-slate-600 text-sm leading-relaxed mb-6 whitespace-pre-line">{berita.desc}</p>
                   </div>
 
-                  {/* Read More / PDF button */}
+                  {/* PDF attachment button if available */}
                   {berita.pdfLink && (
                     <a
                       href={berita.pdfLink}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getSupabase } from "../utils/supabase";
+import NewsDetailModal from "./NewsDetailModal";
 
 const getFetchUrlFromSheetUrl = (sheetUrl) => {
   const match = sheetUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
@@ -14,6 +15,7 @@ const InfoCards = () => {
   const [loadingNews, setLoadingNews] = useState(true);
   const [announcements, setAnnouncements] = useState([]);
   const [activities, setActivities] = useState([]);
+  const [selectedNews, setSelectedNews] = useState(null);
 
   useEffect(() => {
     const loadDashboardAndNews = async () => {
@@ -51,8 +53,8 @@ const InfoCards = () => {
           setLoadingNews(true);
           const { data: newsData } = await supabase.from("berita").select("*").order("id", { ascending: false });
           if (newsData) {
-            const ann = newsData.filter(item => item.kategori === "Pengumuman").slice(0, 3);
-            const act = newsData.filter(item => ["Kegiatan", "Ronda", "Kerja Bakti"].includes(item.kategori)).slice(0, 3);
+            const ann = newsData.filter(item => item.kategori === "Pengumuman").slice(0, 15);
+            const act = newsData.filter(item => ["Kegiatan", "Ronda", "Kerja Bakti"].includes(item.kategori)).slice(0, 15);
             setAnnouncements(ann);
             setActivities(act);
           }
@@ -90,14 +92,20 @@ const InfoCards = () => {
                 Belum ada pengumuman terbaru saat ini.
               </div>
             ) : (
-              <ul className="space-y-4 font-sans text-[15px] text-primary-dark/85">
-                {announcements.map((ann, idx) => (
-                  <li key={ann.id} className={idx < announcements.length - 1 ? "border-b border-primary/5 pb-3" : ""}>
-                    <h4 className="font-bold text-primary text-[15px]">{ann.judul}</h4>
-                    <p className="text-xs text-slate-600 mt-1 font-medium">{ann.tanggal}</p>
-                  </li>
-                ))}
-              </ul>
+              <div className="max-h-[220px] overflow-y-auto pr-1.5 custom-scrollbar">
+                <ul className="space-y-4 font-sans text-[15px] text-primary-dark/85">
+                  {announcements.map((ann, idx) => (
+                    <li 
+                      key={ann.id} 
+                      onClick={() => setSelectedNews(ann)}
+                      className={`group cursor-pointer pb-3 transition-colors ${idx < announcements.length - 1 ? "border-b border-primary/5" : ""}`}
+                    >
+                      <h4 className="font-bold text-primary group-hover:text-secondary text-[15px] transition-colors">{ann.judul}</h4>
+                      <p className="text-xs text-slate-600 mt-1 font-medium">{ann.tanggal}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
         </div>
@@ -118,14 +126,16 @@ const InfoCards = () => {
                 Belum ada kegiatan warga saat ini.
               </div>
             ) : (
-              <ul className="space-y-4 font-sans text-[15px] text-primary-dark/85">
-                {activities.map((act, idx) => (
-                  <li key={act.id} className={idx < activities.length - 1 ? "border-b border-primary/5 pb-3" : ""}>
-                    <h4 className="font-bold text-primary text-[15px]">{act.judul}</h4>
-                    <p className="text-xs text-slate-600 mt-1 font-medium">{act.tanggal}</p>
-                  </li>
-                ))}
-              </ul>
+              <div className="max-h-[220px] overflow-y-auto pr-1.5 custom-scrollbar">
+                <ul className="space-y-4 font-sans text-[15px] text-primary-dark/85">
+                  {activities.map((act, idx) => (
+                    <li key={act.id} className={idx < activities.length - 1 ? "border-b border-primary/5 pb-3" : ""}>
+                      <h4 className="font-bold text-primary text-[15px]">{act.judul}</h4>
+                      <p className="text-xs text-slate-600 mt-1 font-medium">{act.tanggal}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
         </div>
@@ -160,6 +170,13 @@ const InfoCards = () => {
         </div>
 
       </div>
+
+      {/* News details popup modal */}
+      <NewsDetailModal 
+        isOpen={!!selectedNews}
+        onClose={() => setSelectedNews(null)}
+        newsItem={selectedNews}
+      />
     </section>
   );
 };
