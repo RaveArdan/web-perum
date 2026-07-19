@@ -11,6 +11,32 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Cek parameter error dari hash URL (dikirim Supabase jika OAuth gagal)
+    const hash = window.location.hash;
+    if (hash && hash.includes("error_description")) {
+      const params = new URLSearchParams(hash.replace("#", "?"));
+      const errorDesc = params.get("error_description");
+      if (errorDesc) {
+        setAlertConfig({
+          show: true,
+          message: "Gagal masuk: Akun Google Anda belum didaftarkan di database Admin Supabase.",
+          type: "error"
+        });
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+
+    // Cek parameter error dari query URL
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "unauthorized") {
+      setAlertConfig({
+        show: true,
+        message: "Akses ditolak. Email Google Anda tidak terdaftar sebagai administrator.",
+        type: "error"
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     if (isLocalFallback) {
       if (localStorage.getItem("isAdminAuthenticated") === "true") {
         navigate("/admin", { replace: true });

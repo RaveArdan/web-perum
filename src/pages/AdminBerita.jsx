@@ -16,6 +16,8 @@ const AdminBerita = () => {
   const [pdfLink, setPdfLink] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
+  const [pdfFile, setPdfFile] = useState(null);
+  const [pdfSource, setPdfSource] = useState("file"); // "file" atau "link"
   const [showForm, setShowForm] = useState(false);
 
   // Custom alert & confirm states
@@ -73,6 +75,11 @@ const AdminBerita = () => {
     try {
       const supabase = getSupabase();
       let imageUrl = imagePreview;
+      let pdfUrl = pdfLink;
+
+      const oldItem = editingId ? daftarBerita.find(item => item.id === editingId) : null;
+      const oldImgUrl = oldItem ? oldItem.img : null;
+      const oldPdfUrl = oldItem ? oldItem.pdfLink : null;
 
       // Jika ada file gambar baru yang dipilih
       if (imageFile) {
@@ -95,13 +102,45 @@ const AdminBerita = () => {
         }
       }
 
+      // Jika ada file PDF baru yang dipilih (dan mode file aktif)
+      if (pdfSource === "file") {
+        if (pdfFile) {
+          const fileExt = pdfFile.name.split(".").pop();
+          const fileName = `berita_pdf_${Date.now()}.${fileExt}`;
+
+          if (isLocalFallback) {
+            // Fallback lokal (gunakan base64)
+            const reader = new FileReader();
+            const readPdf = () => new Promise((resolve) => {
+              reader.onloadend = () => resolve(reader.result);
+              reader.readAsDataURL(pdfFile);
+            });
+            pdfUrl = await readPdf();
+          } else {
+            // Unggah ke Supabase Storage bucket 'berita'
+            const { error: uploadError } = await supabase.storage
+              .from("berita")
+              .upload(fileName, pdfFile, { cacheControl: "3600", upsert: true });
+
+            if (uploadError) throw uploadError;
+
+            const { data } = supabase.storage.from("berita").getPublicUrl(fileName);
+            pdfUrl = data.publicUrl;
+          }
+        } else if (pdfLink === "") {
+          pdfUrl = null;
+        }
+      } else {
+        pdfUrl = pdfLink || null;
+      }
+
       const newsData = {
         kategori,
         tanggal,
         judul,
         desc,
         img: imageUrl || "",
-        pdfLink: pdfLink || null
+        pdfLink: pdfUrl
       };
 
       if (editingId) {
@@ -111,6 +150,30 @@ const AdminBerita = () => {
           .update(newsData)
           .eq("id", editingId);
         if (error) throw error;
+
+        // Hapus gambar lama dari storage jika berhasil diupdate dengan gambar baru
+        if (imageFile && oldImgUrl && !isLocalFallback) {
+          const bucketPath = `storage/v1/object/public/berita/`;
+          if (oldImgUrl.includes(bucketPath)) {
+            const oldFileName = oldImgUrl.split(bucketPath)[1];
+            if (oldFileName) {
+              await supabase.storage.from("berita").remove([oldFileName]);
+            }
+          }
+        }
+
+        // Hapus PDF lama dari storage jika berhasil diupdate dengan PDF baru atau dikosongkan
+        const isPdfUpdatedOrCleared = (pdfSource === "file" && pdfFile) || (pdfSource === "file" && !pdfFile && pdfLink === "") || (pdfSource === "link" && pdfLink !== oldPdfUrl);
+        if (isPdfUpdatedOrCleared && oldPdfUrl && !isLocalFallback) {
+          const bucketPath = `storage/v1/object/public/berita/`;
+          if (oldPdfUrl.includes(bucketPath)) {
+            const oldPdfName = oldPdfUrl.split(bucketPath)[1];
+            if (oldPdfName) {
+              await supabase.storage.from("berita").remove([oldPdfName]);
+            }
+          }
+        }
+
         showAlert("Berita berhasil diperbarui!", "success");
       } else {
         // Insert berita baru
@@ -143,8 +206,39 @@ const AdminBerita = () => {
   const executeDelete = async (id) => {
     try {
       const supabase = getSupabase();
+      
+      // Cari data berita terlebih dahulu untuk mendapatkan URL gambar dan PDF-nya
+      const { data: itemData } = await supabase
+        .from("berita")
+        .select("img, pdfLink")
+        .eq("id", id)
+        .single();
+
       const { error } = await supabase.from("berita").delete().eq("id", id);
       if (error) throw error;
+
+      // Hapus file gambar dari Storage jika ada dan bukan fallback lokal
+      if (itemData && itemData.img && !isLocalFallback) {
+        const bucketPath = `storage/v1/object/public/berita/`;
+        if (itemData.img.includes(bucketPath)) {
+          const fileName = itemData.img.split(bucketPath)[1];
+          if (fileName) {
+            await supabase.storage.from("berita").remove([fileName]);
+          }
+        }
+      }
+
+      // Hapus file PDF dari Storage jika ada dan bukan fallback lokal
+      if (itemData && itemData.pdfLink && !isLocalFallback) {
+        const bucketPath = `storage/v1/object/public/berita/`;
+        if (itemData.pdfLink.includes(bucketPath)) {
+          const pdfFileName = itemData.pdfLink.split(bucketPath)[1];
+          if (pdfFileName) {
+            await supabase.storage.from("berita").remove([pdfFileName]);
+          }
+        }
+      }
+
       showAlert("Berita berhasil dihapus!", "success");
       loadBerita();
     } catch (err) {
@@ -161,8 +255,19 @@ const AdminBerita = () => {
     setJudul(item.judul);
     setDesc(item.desc);
     setPdfLink(item.pdfLink || "");
+
+    // Tentukan sumber PDF berdasarkan linknya
+    if (item.pdfLink && item.pdfLink.includes("storage/v1/object/public/")) {
+      setPdfSource("file");
+    } else if (item.pdfLink) {
+      setPdfSource("link");
+    } else {
+      setPdfSource("file");
+    }
+
     setImagePreview(item.img || "");
     setImageFile(null);
+    setPdfFile(null);
     setShowForm(true);
   };
 
@@ -175,6 +280,8 @@ const AdminBerita = () => {
     setPdfLink("");
     setImageFile(null);
     setImagePreview("");
+    setPdfFile(null);
+    setPdfSource("file");
     setShowForm(false);
   };
 
@@ -233,8 +340,6 @@ const AdminBerita = () => {
                 >
                   <option value="Kegiatan">Kegiatan</option>
                   <option value="Pengumuman">Pengumuman</option>
-                  <option value="Ronda">Ronda</option>
-                  <option value="Kerja Bakti">Kerja Bakti</option>
                 </select>
               </div>
 
@@ -263,14 +368,91 @@ const AdminBerita = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Link Dokumen PDF (Opsional)</label>
-                <input 
-                  type="text" 
-                  value={pdfLink}
-                  onChange={(e) => setPdfLink(e.target.value)}
-                  className="w-full px-5 py-3 bg-warm border border-slate-200 rounded-full focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 font-semibold text-primary-dark placeholder-slate-400 transition-all text-sm"
-                  placeholder="Masukkan link PDF pendukung (misal jadwal pdf)"
-                />
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                  Dokumen PDF Lampiran (Opsional)
+                </label>
+                
+                {/* Tab Selector */}
+                <div className="flex gap-2 mb-3 bg-slate-100 p-1 rounded-full w-fit">
+                  <button
+                    type="button"
+                    onClick={() => setPdfSource("file")}
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      pdfSource === "file" 
+                        ? "bg-white text-primary shadow-sm" 
+                        : "text-slate-500 hover:text-slate-800"
+                    }`}
+                  >
+                    Upload File
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPdfSource("link")}
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      pdfSource === "link" 
+                        ? "bg-white text-primary shadow-sm" 
+                        : "text-slate-500 hover:text-slate-800"
+                    }`}
+                  >
+                    Tautan / Link
+                  </button>
+                </div>
+
+                {pdfSource === "file" ? (
+                  <div className="space-y-2">
+                    {/* Jika ada file PDF yang sedang terpilih atau sudah ada link storage */}
+                    {(pdfFile || (pdfLink && pdfLink.includes("storage/v1/object/public/"))) ? (
+                      <div className="flex items-center justify-between p-3.5 bg-emerald-50/40 border border-emerald-100/70 rounded-2xl">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                          </div>
+                          <span className="text-xs font-bold text-slate-700 truncate">
+                            {pdfFile ? pdfFile.name : pdfLink.split("/").pop()}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPdfFile(null);
+                            setPdfLink(""); // Kosongkan URL agar dihapus dari db/storage saat simpan
+                          }}
+                          className="text-rose-500 hover:text-rose-600 text-xs font-bold uppercase shrink-0 transition-colors cursor-pointer"
+                        >
+                          Hapus
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <input 
+                          type="file" 
+                          accept="application/pdf"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              if (file.type !== "application/pdf") {
+                                showAlert("Harap pilih file dokumen PDF!", "error");
+                                return;
+                              }
+                              setPdfFile(file);
+                            }
+                          }}
+                          className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary/5 file:text-primary hover:file:bg-primary/10 file:cursor-pointer"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <input 
+                    type="text" 
+                    value={pdfLink.includes("storage/v1/object/public/") ? "" : pdfLink}
+                    onChange={(e) => setPdfLink(e.target.value)}
+                    className="w-full px-5 py-3 bg-warm border border-slate-200 rounded-full focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 font-semibold text-primary-dark placeholder-slate-400 transition-all text-sm"
+                    placeholder="Masukkan link PDF luar (misal: Google Drive)"
+                  />
+                )}
               </div>
             </div>
 

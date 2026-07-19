@@ -16,16 +16,19 @@ const ProtectedRoute = ({ children }) => {
 
     const supabase = getSupabase();
     
-    // Ambil session saat ini secara asinkron
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const checkUserAuthorization = (session) => {
       setAuthenticated(!!session);
       setLoading(false);
+    };
+
+    // Ambil session saat ini secara asinkron
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      checkUserAuthorization(session);
     });
 
     // Dengarkan perubahan status auth
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setAuthenticated(!!session);
-      setLoading(false);
+      checkUserAuthorization(session);
     });
 
     return () => {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getSupabase } from "../utils/supabase";
-import defaultStrukturPengurusPdf from "../assets/STUKTUR PENGURUS BTA.pdf";
+
+const defaultStrukturPengurusPdf = "";
 
 const TentangKami = () => {
   const [pdfUrl, setPdfUrl] = useState(defaultStrukturPengurusPdf);

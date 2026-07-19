@@ -73,6 +73,7 @@ const AdminSettings = () => {
       return;
     }
 
+    const oldPdfUrl = strukturPdfUrl;
     setUploading(true);
     try {
       const supabase = getSupabase();
@@ -120,6 +121,17 @@ const AdminSettings = () => {
           .eq("id", 1);
         if (dbError) throw dbError;
 
+        // Hapus file PDF lama dari storage agar menghemat ruang
+        if (oldPdfUrl && !isLocalFallback) {
+          const bucketPath = `storage/v1/object/public/settings/`;
+          if (oldPdfUrl.includes(bucketPath)) {
+            const oldFileName = oldPdfUrl.split(bucketPath)[1];
+            if (oldFileName) {
+              await supabase.storage.from("settings").remove([oldFileName]);
+            }
+          }
+        }
+
         setUploading(false);
         showAlert("File PDF berhasil diunggah ke storage cloud!", "success");
       }
@@ -140,6 +152,7 @@ const AdminSettings = () => {
   };
 
   const executeDeletePdf = async () => {
+    const oldPdfUrl = strukturPdfUrl;
     setUploading(true);
     try {
       const supabase = getSupabase();
@@ -149,6 +162,18 @@ const AdminSettings = () => {
         .eq("id", 1);
 
       if (error) throw error;
+
+      // Hapus file PDF lama dari storage
+      if (oldPdfUrl && !isLocalFallback) {
+        const bucketPath = `storage/v1/object/public/settings/`;
+        if (oldPdfUrl.includes(bucketPath)) {
+          const oldFileName = oldPdfUrl.split(bucketPath)[1];
+          if (oldFileName) {
+            await supabase.storage.from("settings").remove([oldFileName]);
+          }
+        }
+      }
+
       setStrukturPdfUrl("");
       showAlert("File PDF berhasil dihapus!", "success");
     } catch (err) {

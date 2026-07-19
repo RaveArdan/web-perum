@@ -26,16 +26,16 @@ const DEFAULT_BERITA = [
     kategori: "Ronda",
     tanggal: "Setiap Malam",
     judul: "Jadwal Ronda Malam Warga Terbaru",
-    img: "/src/assets/ronda day 1.jpeg",
-    desc: "Jadwal pembagian tugas ronda malam warga Perumahan Banguntapan Asri untuk meningkatkan keamanan lingkungan. Silakan unduh/lihat file PDF jadwal lengkapnya.",
-    pdfLink: "/src/assets/jadwal rondo.pdf"
+    img: "https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&q=80&w=800",
+    desc: "Jadwal pembagian tugas ronda malam warga Perumahan Banguntapan Asri untuk meningkatkan keamanan lingkungan.",
+    pdfLink: ""
   },
   {
     id: 2,
     kategori: "Kegiatan",
     tanggal: "17 Agustus",
     judul: "Perayaan Hari Kemerdekaan RI",
-    img: "/src/assets/pak juned jaya.JPG",
+    img: "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&q=80&w=800",
     desc: "Antusias Warga Perumahan Banguntapan Asri untuk menyelenggarakan berbagai Rangkaian Perlombaan, Jalan Sehat, dan Malam Tirakatan untuk merayakan hari kemerdekaan Indonesia"
   },
   {
@@ -43,7 +43,7 @@ const DEFAULT_BERITA = [
     kategori: "Kerja Bakti",
     tanggal: "Setiap Hari Minggu",
     judul: "Kerja Bakti Warga",
-    img: "/src/assets/motong daging.png",
+    img: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=800",
     desc: "Kebersamaan warga Perumahan Banguntapan Asri saat bergotong-royong memotong dan membagikan daging secara tertib untuk mempererat silaturahmi antar warga."
   }
 ];
