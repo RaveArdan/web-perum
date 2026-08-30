@@ -92,7 +92,7 @@ const Navbar = () => {
         >
           Beranda
         </Link>
-        <Link to="/#tentang" onClick={(e) => handleNavClick(e, "#tentang")} className="relative py-1 hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-secondary hover:after:w-full after:transition-all after:duration-300">Tentang Kami</Link>
+        <Link to="/#profil" onClick={(e) => handleNavClick(e, "#profil")} className="relative py-1 hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-secondary hover:after:w-full after:transition-all after:duration-300">Profil</Link>
         <Link to="/#fasilitas" onClick={(e) => handleNavClick(e, "#fasilitas")} className="relative py-1 hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-secondary hover:after:w-full after:transition-all after:duration-300">Fasilitas</Link>
         <Link to="/berita" className="relative py-1 hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-secondary hover:after:w-full after:transition-all after:duration-300">Berita</Link>
         <button 
@@ -137,7 +137,7 @@ const Navbar = () => {
           >
             Beranda
           </Link>
-          <Link to="/#tentang" onClick={(e) => handleNavClick(e, "#tentang")} className="hover:text-primary py-2 border-b border-slate-50 transition-colors">Tentang Kami</Link>
+          <Link to="/#profil" onClick={(e) => handleNavClick(e, "#profil")} className="hover:text-primary py-2 border-b border-slate-50 transition-colors">Profil</Link>
           <Link to="/#fasilitas" onClick={(e) => handleNavClick(e, "#fasilitas")} className="hover:text-primary py-2 border-b border-slate-50 transition-colors">Fasilitas</Link>
           <Link to="/berita" onClick={() => setIsOpen(false)} className="hover:text-primary py-2 border-b border-slate-50 transition-colors">Berita</Link>
           <button 
