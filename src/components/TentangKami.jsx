@@ -49,7 +49,7 @@ const TentangKami = () => {
           <h2 className="text-3xl md:text-4xl font-headers font-bold text-primary-dark mb-6 leading-tight tracking-tight">
             Visi Misi
           </h2>
-          <p className="text-primary-dark/90 text-[15px] leading-relaxed mb-8">
+          <p className="text-primary-dark/90 text-[15px] leading-relaxed mb-8 text-justify">
             Membangun komunikasi dan partisipasi aktif warga. Menjaga kebersihan, keamanan, dan ketertiban lingkungan. Mengembangkan kegiatan sosial kemasyarakatan yang humanis. Mendorong transparasi dan akuntabilitas dalam tata kelola RT.
           </p>
 
