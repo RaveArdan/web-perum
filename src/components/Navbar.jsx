@@ -1,16 +1,30 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { getSupabase } from "../utils/supabase";
+import { smoothScrollTo, smoothScrollToId } from "../utils/smoothScroll";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isAspirasiOpen, setIsAspirasiOpen] = useState(false);
   const [aspirasiUrl, setAspirasiUrl] = useState("");
+  const location = useLocation();
 
-  const handleBerandaClick = () => {
+  const handleBerandaClick = (e) => {
+    if (location.pathname === "/") {
+      e.preventDefault();
+      smoothScrollTo(0, 1000);
+    }
     setIsOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleNavClick = (e, hash) => {
+    if (location.pathname === "/") {
+      e.preventDefault();
+      const id = hash.replace("#", "");
+      smoothScrollToId(id, 90, 1000);
+    }
+    setIsOpen(false);
   };
 
   useEffect(() => {
@@ -78,8 +92,8 @@ const Navbar = () => {
         >
           Beranda
         </Link>
-        <Link to="/#tentang" className="relative py-1 hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-secondary hover:after:w-full after:transition-all after:duration-300">Tentang Kami</Link>
-        <Link to="/#fasilitas" className="relative py-1 hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-secondary hover:after:w-full after:transition-all after:duration-300">Fasilitas</Link>
+        <Link to="/#tentang" onClick={(e) => handleNavClick(e, "#tentang")} className="relative py-1 hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-secondary hover:after:w-full after:transition-all after:duration-300">Tentang Kami</Link>
+        <Link to="/#fasilitas" onClick={(e) => handleNavClick(e, "#fasilitas")} className="relative py-1 hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-secondary hover:after:w-full after:transition-all after:duration-300">Fasilitas</Link>
         <Link to="/berita" className="relative py-1 hover:text-primary transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-secondary hover:after:w-full after:transition-all after:duration-300">Berita</Link>
         <button 
           onClick={() => setIsAspirasiOpen(true)}
@@ -123,8 +137,8 @@ const Navbar = () => {
           >
             Beranda
           </Link>
-          <Link to="/#tentang" onClick={() => setIsOpen(false)} className="hover:text-primary py-2 border-b border-slate-50 transition-colors">Tentang Kami</Link>
-          <Link to="/#fasilitas" onClick={() => setIsOpen(false)} className="hover:text-primary py-2 border-b border-slate-50 transition-colors">Fasilitas</Link>
+          <Link to="/#tentang" onClick={(e) => handleNavClick(e, "#tentang")} className="hover:text-primary py-2 border-b border-slate-50 transition-colors">Tentang Kami</Link>
+          <Link to="/#fasilitas" onClick={(e) => handleNavClick(e, "#fasilitas")} className="hover:text-primary py-2 border-b border-slate-50 transition-colors">Fasilitas</Link>
           <Link to="/berita" onClick={() => setIsOpen(false)} className="hover:text-primary py-2 border-b border-slate-50 transition-colors">Berita</Link>
           <button 
             onClick={() => {

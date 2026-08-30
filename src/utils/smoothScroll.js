@@ -2,16 +2,20 @@ export const easeInOutQuad = (t) => {
   return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 };
 
-export const smoothScrollTo = (targetY, duration = 800) => {
+export const smoothScrollTo = (targetY, duration = 1000) => {
   const startY = window.scrollY || window.pageYOffset;
   const distance = targetY - startY;
   let startTime = null;
 
   // Stop previous scrolling logic if needed
   window.isScrolling = true;
+  document.documentElement.style.scrollBehavior = "auto";
 
   const animation = (currentTime) => {
-    if (!window.isScrolling) return;
+    if (!window.isScrolling) {
+      document.documentElement.style.scrollBehavior = "";
+      return;
+    }
 
     if (startTime === null) startTime = currentTime;
     const timeElapsed = currentTime - startTime;
@@ -25,6 +29,7 @@ export const smoothScrollTo = (targetY, duration = 800) => {
       requestAnimationFrame(animation);
     } else {
       window.isScrolling = false;
+      document.documentElement.style.scrollBehavior = "";
     }
   };
 

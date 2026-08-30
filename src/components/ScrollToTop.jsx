@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { smoothScrollTo } from "../utils/smoothScroll";
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
@@ -33,12 +34,8 @@ const ScrollToTop = () => {
             const offsetPosition = elementPosition + currentScrollY - headerOffset;
 
             // Only trigger scroll if we are not already close to the target position
-            // This prevents duplicate scroll triggers from restarting the smooth animation and causing micro-vibrations
             if (Math.abs(currentScrollY - offsetPosition) > 10) {
-              window.scrollTo({
-                top: offsetPosition,
-                behavior: "auto" // Use the CSS 'scroll-behavior: smooth' for the animation
-              });
+              smoothScrollTo(offsetPosition, 1000);
             }
           }
         } catch (err) {
